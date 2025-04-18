@@ -1,0 +1,107 @@
+<div class="createmenu">
+    <div class="employees-header">
+        <playerinformation :playerName="playerInfo.name" :playerJob="formattedJob " :playerPP="playerInfo.pp">
+        </playerinformation>
+        <h2>{{locales.job_panel}}</h2>
+        <div @click="setAdminActivePage('adminlist')" class="header-button">
+            <p>{{locales.cancel}}</p>
+        </div>
+    </div>
+    <div class="seperator"></div>
+    <div class="createmenu-container">
+        <div class="createmenu-settings">
+            <h1>{{locales.business_settings}}</h1>
+            <div class="createmenu-settings-container">
+
+                <div style="cursor: pointer;" class="business-overall-text-container recruit-input-container"
+                    @click="selectBusiness=!selectBusiness">
+                    <h1>{{locales.select_business}}</h1>
+                    <div class="business-overall-box">
+                        <inlinesvg src="./assets/svg/select-business-icon.svg"></inlinesvg>
+                        <p>{{selectedJob.label || locales.select_job}}</p>
+                    </div>
+                    <ul v-if="selectBusiness" style="position: absolute; left: 50%; bottom: -1%;">
+                        <div class="no-scrollbar">
+                            <li @click="selectedJob=job" v-for="job in jobs">{{job.label}}</li>
+
+
+
+                        </div>
+                    </ul>
+                </div>
+                <div class="business-overall-text-container">
+                    <h1>{{locales.business_location}}</h1>
+                    <div class="business-overall-box">
+                        <inlinesvg style="cursor: pointer;" @click="copyCoords" src="./assets/svg/location-icon.svg">
+                        </inlinesvg>
+                        <input type="text" v-model="coords" placeholder="vector3()">
+                    </div>
+                </div>
+                <div class="business-overall-text-container">
+                    <h1>{{locales.business_rank}}</h1>
+                    <div class="business-overall-box">
+                        <inlinesvg src="./assets/svg/star-icon.svg"></inlinesvg>
+                        <input v-model="businessBossRank" type="text" placeholder="Boss Rank">
+                    </div>
+                </div>
+                <div class="business-overall-text-container">
+                    <h1>{{locales.business_page_access}}</h1>
+                    <div class="business-overall-box">
+                        <inlinesvg src="./assets/svg/access-icon.svg"></inlinesvg>
+                        <div class="business-page-access">
+                            <p @click="toggleBusinessAccessPage('employees')"
+                                :class="{active : businessAccessPage.includes('employees')}">{{locales.employee}}</p>
+                            <p @click="toggleBusinessAccessPage('ranks')"
+                                :class="{active : businessAccessPage.includes('ranks')}">{{locales.ranks}}</p>
+                            <p @click="toggleBusinessAccessPage('vault')"
+                                :class="{active : businessAccessPage.includes('vault')}">{{locales.vault}}</p>
+                            <p @click="toggleBusinessAccessPage('inventory')"
+                                :class="{active : businessAccessPage.includes('inventory')}">{{locales.inventory}}</p>
+                            <p @click="toggleBusinessAccessPage('outfit')"
+                                :class="{active : businessAccessPage.includes('outfit')}">{{locales.clothes}}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="createmenu-adjustments">
+            <h1>{{locales.business_adjustments}}</h1>
+            <div class="createmenu-adjustments-container">
+                <div class="business-logo-container">
+                    <template v-if="logo">
+                        <img :src="logo">
+                    </template>
+                    <template v-else>
+                        <inlinesvg src="./assets/svg/business-icon.svg"></inlinesvg>
+                        <p>{{locales.no_logo }}</p>
+                    </template>
+                </div>
+                <div class="business-adjustments-link-container">
+                    <h2>{{locales.by_link}}</h2>
+                    <div class="business-adjustments-input-holder">
+                        <inlinesvg class="link-icon" src="./assets/svg/link-icon.svg"></inlinesvg>
+                        <input v-model="logo" type="text" :placeholder="locales.insert_image">
+                    </div>
+
+                </div>
+                <p class="recommended-size" v-html="locales.recommended_size"></p>
+                <div class="theme-buttons-container">
+                    <h1>{{locales.change_theme}}</h1>
+                    <div class="theme-buttons">
+                        <div class="theme-button black" :class="{selected : theme == 'black'}" @click="SetTheme('black')"></div>
+                        <div class="theme-button blue" :class="{selected : theme == 'blue'}" @click="SetTheme('blue')"></div>
+                        <div class="theme-button red" :class="{selected : theme == 'red'}" @click="SetTheme('red')"></div>
+                        <div class="theme-button purple" :class="{selected : theme == 'purple'}" @click="SetTheme('purple')"></div>
+                        <div class="theme-button yellow" :class="{selected : theme == 'yellow'}" @click="SetTheme('yellow')"></div>
+                        <div class="theme-button green" :class="{selected : theme == 'green'}" @click="SetTheme('green')"></div>
+
+                    </div>
+                </div>
+                <div @click="createMenu" class="create-business-button">
+                   {{locales.create_job_menu}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
