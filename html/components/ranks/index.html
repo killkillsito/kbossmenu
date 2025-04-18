@@ -1,0 +1,65 @@
+<div class="ranks">
+    <div class="black-overlay" @click.self="setCurrentAction(false);" v-if="currentAction == 'createrank'"></div>
+    <div class="rank-create-modal" v-if="currentAction == 'createrank'">
+        <h1 class="rank-create-modal-header">Create New Rank</h1>
+        <div class="rank-create-modal-container">
+            <inlinesvg src="./assets/svg/employee-logo.svg"></inlinesvg>
+            <div class="rank-create-name-container">
+                <p class="rank-create-name-text">{{locales.rank_name}}</p>
+                <p class="rank-create-label-text">{{locales.rank_name}}</p>
+                <p class="rank-create-level-text">{{locales.rank_name}}</p>
+            </div>
+            <div class="rank-create-modal-inputs">
+                <input placeholder="Rank Name" type="text" class="rank-create-modal-input">
+                <input placeholder="Rank Label" type="text" class="rank-create-modal-input">
+                <input placeholder="Rank Level" type="text" class="rank-create-modal-input">
+                <p class="rank-create-info">{{locales.create_rank_desc}}</p>
+            </div>
+            <div class="header-button">
+                <p>{{locales.create}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="employees-header">
+        <playerinformation  :theme="companyData.theme" :playerName="playerInfo.name" :playerJob="formattedJob " :playerPP="playerInfo.pp" ></playerinformation>
+        <div class="employees-input-container">
+            <div class="employees-input-wrapper">
+                <inlinesvg src="./assets/svg/search-icon.svg" class="employees-search-icon"></inlinesvg>
+                <input v-model="filteredRank" type="text" :placeholder="locales.search_any_rank">
+            </div>
+        </div>
+    
+    </div>
+    <div class="seperator"></div>
+    <div class="employee-list-container">
+        <div class="employee-list-header">
+            <h1>{{locales.rank_list}} {{locales.rank_list}}</h1>
+            <p>{{this.ranks.length}} {{locales.total_ranks}}</p>
+        </div>
+        <div class="employees-list no-scrollbar">
+            <div class="employee" :class="{[companyData.theme]:true}" v-for="rank in getFilteredRanks">
+
+                <inlinesvg  :class="{[companyData.theme]:true}"   v-if="rank.isboss" src="./assets/svg/boss-logo-icon.svg"></inlinesvg>
+                <inlinesvg :class="{[companyData.theme]:true}" v-else src="./assets/svg/employee-logo.svg"></inlinesvg>
+
+                <p class="employee-name">{{rank.label}}</p>
+                <p class="employee-job">{{locales.grade}} - {{rank.grade}}</p>
+                <div class="seperator"></div>
+
+                <div class="employee-other-info">
+                    <inlinesvg src="./assets/svg/player-icon.svg"></inlinesvg>
+                    <p>{{playerCountInRank(rank.grade)}} {{locales.players}}</p>
+                </div>
+                <div class="employee-other-info">
+                    <inlinesvg src="./assets/svg/access-icon.svg"></inlinesvg>
+                    <p>{{locales.all_access}}</p>
+                </div>
+                <div class="seperator"></div>
+                <div :class="{[companyData.theme]:true}"  class="header-button"  @click="RankDetails(rank.grade)">
+                    <p>{{locales.details}}</p>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</div>

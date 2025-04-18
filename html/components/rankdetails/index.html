@@ -1,0 +1,250 @@
+<div class="employees">
+    <div class="black-overlay" @click.self="setDeleteModal(false);" v-if="deleteModal">
+    </div>
+    <div class="employee-fire-modal" v-if="deleteModal">
+        <h1 class="employee-fire-modal-header">{{locales.sure_to_delete}}</h1>
+        <div class="employee-fire-modal-container">
+            <inlinesvg   :class="{[companyData.theme]:true}" v-if="getSelectedRankData.isboss" src="./assets/svg/boss-logo-icon.svg"/>
+            <inlinesvg  :class="{[companyData.theme]:true}"  v-else src="./assets/svg/employee-logo.svg"/>
+
+            <div class="player-info-holder">
+                <h1>{{getSelectedRankData.grade}}</h1>
+                <p>{{locales.rank_level}} - {{getSelectedRankData.grade}}</p>
+            </div>
+       
+            <div @click="setDeleteModal(false);" class="cancel-button">
+                {{locales.cancel}}
+            </div>
+        </div>
+
+    </div>
+    <div class="employees-header">
+        <playerinformation :theme="companyData.theme" :playerName="playerInfo.name" :playerJob="formattedJob " :playerPP="playerInfo.pp"/>
+
+        <div class="employees-input-container">
+            <div class="employees-input-wrapper">
+                <inlinesvg src="./assets/svg/search-icon.svg" class="employees-search-icon"></inlinesvg>
+                <input type="text" :placeholder="locales.search_any_rank">
+            </div>
+        </div>
+        <div class="header-button" :class="{[companyData.theme]:true}" @click="setActivePage('ranks');setSelectedRank(false)">
+            <inlinesvg src="./assets/svg/back-icon.svg"></inlinesvg>
+            <p>{{locales.go_back}}</p>
+        </div>
+    </div>
+    <div class="seperator"></div>
+    <div class="employee-list-container">
+        <div class="employee-list-header">
+            <h1>{{locales.go_back}}</h1>
+            <p>{{locales.players_in_this_rank}}</p>
+        </div>
+        <div class="employee-details-container">
+            <div class="employee-details"  :class="{[companyData.theme]:true}">
+                <div class="employee-details-header">
+                    <div class="player-pp-container">
+                        <inlinesvg   :class="{[companyData.theme]:true}" v-if="getSelectedRankData.isboss" src="./assets/svg/boss-logo-icon.svg"/>
+                        <inlinesvg  :class="{[companyData.theme]:true}"  v-else src="./assets/svg/employee-logo.svg"/>
+            
+
+                        <div class="player-info-holder">
+                            <h1>{{getSelectedRankData.label}}</h1>
+                            <p>{{locales.grade}} - {{getSelectedRankData.grade}}</p>
+                        </div>
+                    </div>
+                 
+                </div>
+                <div class="employee-status-container">
+                    <div class="employee-status">
+                        <div class="employee-status-wrapper">
+                            <h1 class="employee-logs-header">{{locales.rank_detail}}</h1>
+                            <div class="employee-status-box-container">
+
+                                <div class="employee-status-box">
+                                    <inlinesvg style="position: relative; top: .2rem;"
+                                        src="./assets/svg/rank-detail-icon.svg">
+                                    </inlinesvg>
+                                    <p class="employee-status-box-text">{{locales.default_rank}}</p>
+                                </div>
+                            </div>
+                        </div>
+                     
+                       
+                       
+                        <div class="employee-status-wrapper">
+                            <h1 class="employee-logs-header">{{locales.rank_permissions}}</h1>
+                            <div class="permission-pages">
+                                <div @click="setCurrentPermissionPage('employee')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'employee', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/employee-icon-white.svg"></inlinesvg>
+                                </div>
+                                <div @click="setCurrentPermissionPage('ranks')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'ranks', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/ranks-icon-white.svg"></inlinesvg>
+                                </div>
+                                <div @click="setCurrentPermissionPage('vault')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'vault', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/vault-icon-white.svg"></inlinesvg>
+                                </div>
+                                <div @click="setCurrentPermissionPage('inventory')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'inventory', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/inventory-icon-white.svg"></inlinesvg>
+                                </div>
+                                <div @click="setCurrentPermissionPage('outfit')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'outfit', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/outfit-icon-white.svg"></inlinesvg>
+                                </div>
+                                <div @click="setCurrentPermissionPage('overall')" class="permission-box"
+                                    :class="{active : currentPermissionPage == 'overall', [companyData.theme]:true}">
+                                    <inlinesvg src="./assets/svg/overall-icon-white.svg"></inlinesvg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="employee-logs-container">
+                        <h1 class="employee-logs-header">{{currentPermissionPage == false ? locales.permissions : locales.employee_page_permissions}}</h1>
+                        <div class="employee-logs" v-if="currentPermissionPage == false">
+                            <inlinesvg src="./assets/svg/settings-icon.svg" class="ranks-settings-icon"></inlinesvg>
+                            <p class="click-on-rank">{{locales.click_on_rank}}</p>
+                        </div>
+                        <div class="rank-permissions" v-else>
+                            <div class="seperator"></div>
+
+                            <template v-if="currentPermissionPage == 'employee'">
+                             
+                                <div class="rank-permission">
+                                    <p>{{locales.access_to_employee}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].accessToEmployeePage" @change="togglePermission('accessToEmployeePage')" type="checkbox" />
+                                </div>
+
+                                <div class="rank-permission">
+                                    <p>{{locales.recruit_new_employee}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].recruitNewEmployee" @change="togglePermission('recruitNewEmployee')" type="checkbox" />
+                                </div>
+                          
+                                <div class="rank-permission">
+                                    <p>{{locales.access_to_details}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].accessToEmployeeDetails" @change="togglePermission('accessToEmployeeDetails')"  type="checkbox" />
+                                </div>
+                          
+                                <div class="rank-permission">
+                                    <p>{{locales.fire_employees}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].fireEmployee" @change="togglePermission('fireEmployee')" type="checkbox" />
+                                </div>
+                          
+                                <div class="rank-permission">
+                                    <p>{{locales.edit_note}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].editNote" @change="togglePermission('editNote')" type="checkbox" />
+                                </div>
+                               
+                                <div class="rank-permission">
+                                    <p>{{locales.change_certifications}} </p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].changeEmployeeCertifications" @change="togglePermission('changeEmployeeCertifications')" type="checkbox" />
+                                </div>
+
+                                <div class="rank-permission">
+                                    <p>{{locales.upload_logo}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].uploadNewLogo" @change="togglePermission('uploadNewLogo')" type="checkbox" />
+                                </div>
+                            </template>
+                            <template v-else-if="currentPermissionPage == 'ranks'">
+                                <div class="rank-permission">
+                                    <p>{{locales.access_rank}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].accessToRanksPage" @change="togglePermission('accessToRanksPage')" type="checkbox" />
+                                </div>
+                              
+                                <div class="rank-permission">
+                                    <p>{{locales.change_rank}}</p>
+                                    <input :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].changeRankLevel" @change="togglePermission('changeRankLevel')"  type="checkbox" />
+                                </div>
+                             
+                            
+                                                           
+                            </template>
+                            <template v-else-if="currentPermissionPage == 'vault'">
+                                <div class="rank-permission">
+                                    <p>{{locales.access_money_page}}</p>
+                                    <input  :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].accessToCompanyPage" @change="togglePermission('accessToCompanyPage')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.deposit_money}} </p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].depositMoney" @change="togglePermission('depositMoney')"  type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{locales.withdraw_money}}</p>
+                                    <input  :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].withdrawMoney" @change="togglePermission('withdrawMoney')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.toggle_actions}}</p>
+                                    <input  :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].vaultDisableEnableActions" @change="togglePermission('vaultDisableEnableActions')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.view_log}}</p>
+                                    <input  :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].viewMoneyLog" @change="togglePermission('viewMoneyLog')" type="checkbox" />
+                                </div>                               
+                            </template>
+                            <template v-else-if="currentPermissionPage == 'inventory'">
+                                <div class="rank-permission">
+                                    <p>{{locales.access_inventory}}</p>
+                                    <input  :class="{[companyData.theme]:true}" :checked="companyData.permissions[selectedRank.toString()].accessToInventory" @change="togglePermission('accessToInventory')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.take_item}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].takeItem" @change="togglePermission('takeItem')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.toggle_actions}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].inventoryDisableEnableActions" @change="togglePermission('inventoryDisableEnableActions')" type="checkbox" />
+                                </div>
+                         
+                                                         
+                            </template>
+                            <template v-else-if="currentPermissionPage == 'outfit'">
+                                <div class="rank-permission">
+                                    <p>{{locales.access_clothing}}</p>
+                                    <input  :class="{[companyData.theme]:true}"   :checked="companyData.permissions[selectedRank.toString()].accessToClothingPage" @change="togglePermission('accessToClothingPage')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.add_dress}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].addDressCode" @change="togglePermission('addDressCode')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.edit_dress}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].editDressCode" @change="togglePermission('editDressCode')" type="checkbox" />
+                                </div>
+                                <div class="rank-permission">
+                                    <p>{{locales.delete_dress_code}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].deleteDressCode" @change="togglePermission('deleteDressCode')" type="checkbox" />
+                                </div>
+                                                         
+                            </template>
+                            <template v-else-if="currentPermissionPage == 'overall'">
+                                <div class="rank-permission">
+                                    <p>{{locales.access_to_overall}}</p>
+                                    <input  :class="{[companyData.theme]:true}"  :checked="companyData.permissions[selectedRank.toString()].accessToBusinessPage" @change="togglePermission('accessToBusinessPage')" type="checkbox" />
+                                </div>
+                              
+                                                         
+                            </template>
+                            <div class="seperator"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="employee-note" :class="{[companyData.theme]:true}">
+                <div v-if="getEmployees.length > 0" class="employee-list no-scrollbar">
+                    <div @click="EmployeeDetails(employee.identifier)" class="employee-list-item" v-for="employee in getEmployees">
+                        <playerinformation :theme="companyData.theme" :playerName="employee.name" :playerJob="employee.rankLabel " :playerPP="employee.profilepicture" />
+                        <div class="employee-view-button" :class="{[companyData.theme]:true}">{{locales.view}}</div>
+                    </div>
+
+                </div>
+                <div v-else class="employee-list-header">
+                    <p>{{locales.no_player}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

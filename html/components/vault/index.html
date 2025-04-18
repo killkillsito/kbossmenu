@@ -1,0 +1,86 @@
+<div class="vault">
+    <div class="employees-header">
+        <playerinformation :theme="companyData.theme" :playerName="playerInfo.name" :playerJob="formattedJob " :playerPP="playerInfo.pp"></playerinformation>
+        <div class="employees-input-container">
+            <div class="employees-input-wrapper">
+                <inlinesvg src="./assets/svg/search-icon.svg" class="employees-search-icon"></inlinesvg>
+                <input type="text" v-model="moneyloginput" :placeholder="locales.search_any_log" />
+            </div>
+        </div>
+        <div @click="ToggleAction" class="disable-actions-button" :class="{enabled:companyData.vaultDisabled==1}">
+            <p>{{companyData.vaultDisabled == 1 ? locales.enable_actions : locales.disable_actions}}</p>
+        </div>
+    </div>
+    <div class="seperator"></div>
+    <div class="vault-wrapper">
+        <div class="vault-company-money">
+            <div class="vault-company-money-wrapper">
+                <h1 class="vault-header-text">{{locales.company_money}}</h1>
+                <div class="card-container" :style="{backgroundImage: 'url('+getCardBG+')'}">
+                    <img class="card-logo" src="./assets/images/job-logo.png" />
+                    <p class="card-job-text">
+                      {{companyData.company}}
+                    </p>
+                    <img class="bank-logo" src="./assets/images/bank-logo.png" />
+                    <p  class="vault-company-money-text">${{vaultData.companyMoney.toLocaleString() ? vaultData.companyMoney.toLocaleString() : '0'}}</p>
+                    <img class="chip-logo" src="./assets/images/chip.png" />
+                </div>
+            </div>
+            <input type="text" v-model="companyAmount" @input="checkInput" class="vault-company-amount-input" :placeholder="locales.amount" />
+            <div class="vault-deposit-button" :class="{[companyData.theme]:true}" @click="depositMoney">{{locales.deposit}}</div>
+            <div class="vault-withdraw-button" @click="withdrawMoney">{{locales.withdraw}}</div>
+        </div>
+        <div class="vault-money-log">
+            <h1 class="vault-header-text">{{locales.money_log}}</h1>
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                
+                <div  class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide">
+               
+                        <inlinesvg :style="{opacity: selectedIdentifier == false ? '1.0' : '0.4'}" style="transition: all .2s ease;"   :class="{[companyData.theme]:true}"  @click="filternotificationdataAll"  src="./assets/svg/all-filter.svg"/>
+
+                        <p :style="{opacity: selectedIdentifier == false  ? '1.0' : '0.4'}" style="text-align: center; transition: all .2s ease;">{{locales.all}}</p>
+                    </div>
+                    <div v-for="(i,index) in companyData.employees" class="swiper-slide " @click="filternotificationdata(i.identifier)">
+                        <div :style="{opacity: i.identifier == selectedIdentifier ? '1.0' : '0.4'}" style="transition: all .2s ease;"  class="player-pp-holder " :class="{[companyData.theme]:true}">
+                            <img :src="i.profilepicture" />
+                        </div>
+                        <p :style="{opacity: i.identifier == selectedIdentifier ? '1.0' : '0.4'}" style="transition: all .2s ease;" >{{i.name}}</p>
+                    </div>
+                </div>
+            </div>
+            <div v-if="hasPermission" :class="{[companyData.theme]:true}" class="vault-has-permission">
+                <div class="vault-logs no-scrollbar">
+                    <div v-if="reversedTransaction" class="vault-log" v-for="i in reversedTransaction">
+                        <h1>{{i.type == '-' ? locales.money_withdrawn : 'Money Deposited'}}</h1>
+                        <div class="seperator"></div>
+                        <div class="log-info">
+                            <p>{{locales.from}}</p>
+                            <h2>{{i.from}}</h2>
+                        </div>
+                        <div class="log-info">
+                            <p>{{locales.to}}</p>
+                            <h2>{{i.to}}</h2>
+                        </div>
+                        <div class="log-info">
+                            <p>{{locales.date}}</p>
+                            <h2>{{i.date}}</h2>
+                        </div>
+                        <div class="log-info withdraw">
+                            <p>{{locales.amount}}</p>
+                            <h2 :style="{color: i.type == '-' ? '#FF747A' : '#83FF87'}">{{ i.type }}{{ i.amount }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else :class="{[companyData.theme]:true}" class="vault-no-permission">
+                <inlinesvg src="./assets/svg/no-permission-icon.svg"></inlinesvg>
+                <p v-html="locales.no_permission">
+                 
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
